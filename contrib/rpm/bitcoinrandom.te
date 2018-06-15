@@ -1,0 +1,81 @@
+policy_module(bitcoinrandom, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type bitcoinrandom_t;
+type bitcoinrandom_exec_t;
+init_daemon_domain(bitcoinrandom_t, bitcoinrandom_exec_t)
+
+permissive bitcoinrandom_t;
+
+type bitcoinrandom_initrc_exec_t;
+init_script_file(bitcoinrandom_initrc_exec_t)
+
+type bitcoinrandom_conf_t;
+files_type(bitcoinrandom_conf_t)
+
+type bitcoinrandom_var_lib_t;
+files_type(bitcoinrandom_var_lib_t)
+
+type bitcoinrandom_var_run_t;
+files_type(bitcoinrandom_var_run_t)
+
+type bitcoinrandom_port_t;
+corenet_port(bitcoinrandom_port_t)
+
+########################################
+#
+# bitcoinrandom local policy
+#
+allow bitcoinrandom_t self:process { fork };
+
+allow bitcoinrandom_t self:fifo_file rw_fifo_file_perms;
+allow bitcoinrandom_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(bitcoinrandom_t, bitcoinrandom_conf_t, bitcoinrandom_conf_t)
+manage_files_pattern(bitcoinrandom_t, bitcoinrandom_conf_t, bitcoinrandom_conf_t)
+
+manage_dirs_pattern(bitcoinrandom_t, bitcoinrandom_var_lib_t, bitcoinrandom_var_lib_t)
+manage_files_pattern(bitcoinrandom_t, bitcoinrandom_var_lib_t, bitcoinrandom_var_lib_t)
+files_var_lib_filetrans(bitcoinrandom_t, bitcoinrandom_var_lib_t, { dir file })
+
+manage_dirs_pattern(bitcoinrandom_t, bitcoinrandom_var_run_t, bitcoinrandom_var_run_t)
+manage_files_pattern(bitcoinrandom_t, bitcoinrandom_var_run_t, bitcoinrandom_var_run_t)
+
+sysnet_dns_name_resolve(bitcoinrandom_t)
+corenet_all_recvfrom_unlabeled(bitcoinrandom_t)
+
+allow bitcoinrandom_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(bitcoinrandom_t)
+corenet_tcp_sendrecv_generic_node(bitcoinrandom_t)
+corenet_tcp_sendrecv_all_ports(bitcoinrandom_t)
+corenet_tcp_bind_generic_node(bitcoinrandom_t)
+
+gen_require(`
+    type bitcoinrandom_port_t;
+')
+allow bitcoinrandom_t bitcoinrandom_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type bitcoinrandom_port_t;
+')
+allow bitcoinrandom_t bitcoinrandom_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(bitcoinrandom_t)
+
+files_read_etc_files(bitcoinrandom_t)
+
+miscfiles_read_localization(bitcoinrandom_t)
+
+sysnet_dns_name_resolve(bitcoinrandom_t)
+
+allow bitcoinrandom_t bitcoinrandom_exec_t:file execute_no_trans;
+allow bitcoinrandom_t self:process setsched;
+corecmd_exec_ls(bitcoinrandom_t)
+corenet_tcp_connect_http_port(bitcoinrandom_t)
+dev_read_urand(bitcoinrandom_t)
+fs_getattr_xattr_fs(bitcoinrandom_t)
+kernel_read_system_state(bitcoinrandom_t)

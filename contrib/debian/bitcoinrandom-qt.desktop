@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=BitcoinRandom Core
+Comment=Connect to the BitcoinRandom P2P Network
+Comment[de]=Verbinde mit dem BitcoinRandom peer-to-peer Netzwerk
+Comment[fr]=BitcoinRandom, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=BitcoinRandom, eşten eşe kriptografik sanal para birimi
+Exec=bitcoinrandom-qt %u
+Terminal=false
+Type=Application
+Icon=bitcoinrandom128
+MimeType=x-scheme-handler/bitcoinrandom;
+Categories=Office;Finance;

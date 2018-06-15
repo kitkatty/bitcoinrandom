@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/bitcoinrandom/.bitcoinrandom" ]; then
+	BITCOINRANDOMD_DEFAULT_DATADIR="/var/lib/bitcoinrandom/.bitcoinrandom"
+else
+	BITCOINRANDOMD_DEFAULT_DATADIR="/var/lib/bitcoinrandomd"
+fi
+
+BITCOINRANDOMD_CONFIGFILE=${BITCOINRANDOMD_CONFIGFILE:-/etc/bitcoinrandom/bitcoinrandom.conf}
+BITCOINRANDOMD_PIDDIR=${BITCOINRANDOMD_PIDDIR:-/var/run/bitcoinrandomd}
+BITCOINRANDOMD_PIDFILE=${BITCOINRANDOMD_PIDFILE:-${BITCOINRANDOMD_PIDDIR}/bitcoinrandomd.pid}
+BITCOINRANDOMD_DATADIR=${BITCOINRANDOMD_DATADIR:-${BITCOINRANDOMD_DEFAULT_DATADIR}}
+BITCOINRANDOMD_USER=${BITCOINRANDOMD_USER:-${BITCOINRANDOM_USER:-bitcoinrandom}}
+BITCOINRANDOMD_GROUP=${BITCOINRANDOMD_GROUP:-bitcoinrandom}
+BITCOINRANDOMD_BIN=${BITCOINRANDOMD_BIN:-/usr/bin/bitcoinrandomd}
+BITCOINRANDOMD_NICE=${BITCOINRANDOMD_NICE:-${NICELEVEL:-0}}
+BITCOINRANDOMD_OPTS="${BITCOINRANDOMD_OPTS:-${BITCOINRANDOM_OPTS}}"
+
+name="BitcoinRandom Core Daemon"
+description="BitcoinRandom cryptocurrency P2P network daemon"
+
+command="/usr/bin/bitcoinrandomd"
+command_args="-pid=\"${BITCOINRANDOMD_PIDFILE}\" \
+		-conf=\"${BITCOINRANDOMD_CONFIGFILE}\" \
+		-datadir=\"${BITCOINRANDOMD_DATADIR}\" \
+		-daemon \
+		${BITCOINRANDOMD_OPTS}"
+
+required_files="${BITCOINRANDOMD_CONFIGFILE}"
+start_stop_daemon_args="-u ${BITCOINRANDOMD_USER} \
+			-N ${BITCOINRANDOMD_NICE} -w 2000"
+pidfile="${BITCOINRANDOMD_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${BITCOINRANDOMD_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${BITCOINRANDOMD_USER}:${BITCOINRANDOMD_GROUP}" \
+	"${BITCOINRANDOMD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${BITCOINRANDOMD_USER}:${BITCOINRANDOMD_GROUP}" \
+	"${BITCOINRANDOMD_PIDDIR}"
+
+	checkpath -f \
+	-o ${BITCOINRANDOMD_USER}:${BITCOINRANDOMD_GROUP} \
+	-m 0660 \
+	${BITCOINRANDOMD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${BITCOINRANDOMD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run bitcoinrandomd."
+		eerror "The setting must appear in ${BITCOINRANDOMD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"BitcoinRandom Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

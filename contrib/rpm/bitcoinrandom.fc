@@ -1,0 +1,8 @@
+/usr/bin/bitcoinrandom-cli		--	gen_context(system_u:object_r:bitcoinrandom_exec_t,s0)
+/usr/sbin/bitcoinrandomd		--	gen_context(system_u:object_r:bitcoinrandom_exec_t,s0)
+/usr/lib(64)?/bitcoinrandom/bitcoinrandomd		--	gen_context(system_u:object_r:bitcoinrandom_exec_t,s0)
+
+/etc/bitcoinrandom(/.*)?		gen_context(system_u:object_r:bitcoinrandom_conf_t,s0)
+/var/lib/bitcoinrandom(/.*)?		gen_context(system_u:object_r:bitcoinrandom_var_lib_t,s0)
+
+(/var)?/run/bitcoinrandomd(/.*)?   gen_context(system_u:object_r:bitcoinrandom_var_run_t,s0)

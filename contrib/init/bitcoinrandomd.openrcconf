@@ -1,0 +1,33 @@
+# /etc/conf.d/bitcoinrandomd: config file for /etc/init.d/bitcoinrandomd
+
+# Config file location
+#BITCOINRANDOMD_CONFIGFILE="/etc/bitcoinrandom/bitcoinrandom.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOINRANDOMD_USER)
+#BITCOINRANDOMD_PIDDIR="/var/run/bitcoinrandomd"
+
+# What filename to give the pidfile
+#BITCOINRANDOMD_PIDFILE="${BITCOINRANDOMD_PIDDIR}/bitcoinrandomd.pid"
+
+# Where to write bitcoinrandomd data (be mindful that the blockchain is large)
+#BITCOINRANDOMD_DATADIR="/var/lib/bitcoinrandomd"
+
+# User and group to own bitcoinrandomd process
+#BITCOINRANDOMD_USER="bitcoinrandom"
+#BITCOINRANDOMD_GROUP="bitcoinrandom"
+
+# Path to bitcoinrandomd executable
+#BITCOINRANDOMD_BIN="/usr/bin/bitcoinrandomd"
+
+# Nice value to run bitcoinrandomd under
+#BITCOINRANDOMD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+#BITCOINRANDOMD_OPTS=""
+
+# The timeout in seconds OpenRC will wait for bitcoinrandomd to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+BITCOINRANDOMD_SIGTERM_TIMEOUT=60
