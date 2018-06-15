@@ -3,7 +3,7 @@ BitcoinRandom Core integration/staging tree
 
 [![Build Status](https://travis-ci.org/bitcoinrandom/bitcoinrandom.svg?branch=master)](https://travis-ci.org/bitcoinrandom/bitcoinrandom)
 
-https://bitcoinrandomcore.org
+https://bitcoinrandom.org
 
 What is BitcoinRandom?
 ----------------
