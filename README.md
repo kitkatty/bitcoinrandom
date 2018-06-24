@@ -16,7 +16,7 @@ software which enables the use of this currency.
 
 For more information, as well as an immediately useable, binary version of
 the BitcoinRandom Core software, see https://bitcoinrandom.org/en/download, or read the
-[original whitepaper](https://bitcoinrandomcore.org/bitcoinrandom.pdf).
+[original whitepaper](https://bitcoinrandomcore.org/bitcoinrandom.pdf). (Coming soon)
 
 License
 -------
